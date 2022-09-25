@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import logo from './logo.svg';
-import { Table, Layout, Menu } from 'antd';
+import { Table, Layout, Menu, Avatar, Input  } from 'antd';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import { Rating } from 'react-simple-star-rating'
 import './App.css';
+import { BugOutlined, SearchOutlined } from '@ant-design/icons'
+
 function App() {
     const [products, setProducts] = useState([]);
     const [statistics, setStatistics] = useState([])
@@ -650,6 +652,34 @@ function App() {
     console.log('products--->', products);
     return (
         <div className="App">
+            <div className='me-4 d-none d-sm-flex' style={{ marginTop: "10px", justifyContent: "space-between", alignItems:'center' }}>
+                <div >
+                    <Input placeholder="Search Employees, Jobs, Companies, etc." style={{
+                        width: "887px",
+                        marginLeft: "74px", padding: "6px", borderRadius: "6px"
+                    }} />
+                </div>
+                <div>
+                    <BugOutlined /> Report Bug
+                </div>
+                <div>
+                    <div className='align-items-center' style={{ display: "flex" }}>
+                        <div className='me-3'>
+                            Matt</div>
+                        <div> <Avatar size={40}>U</Avatar></div>
+                    </div>
+                </div>
+            </div>
+            <nav class="navbar navbar-light bg-light d-block d-sm-none">
+                <div class="container-fluid">
+                    <form class="d-flex">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                        <span class="btn btn-outline-success" type="submit">vinoth</span>
+
+                        <Avatar size={40}>U</Avatar>
+                    </form>
+                </div>
+            </nav>
             <div className='d-none d-sm-block'>
                 <Table
                     columns={columns}
@@ -688,35 +718,35 @@ function App() {
                         </div> */}
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Title</div>
-                                <div className='col-8 text-start'>{data.title}</div>
+                                <div className='col-8 productValue text-start title'>{data.title}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Brand</div>
-                                <div className='col-8 text-start'>{data.brand}</div>
+                                <div className='col-8 productValue text-start'>{data.brand}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Category</div>
-                                <div className='col-8 text-start'>{data.category}</div>
+                                <div className='col-8 productValue text-start'>{data.category}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Description</div>
-                                <div className='col-8 text-start'>{data.description}</div>
+                                <div className='col-8 productValue text-start'>{data.description}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Discount Percentage</div>
-                                <div className='col-8 text-start'>{data.discountPercentage}</div>
+                                <div className='col-4 productDetail text-start '>Discount Percentage</div>
+                                <div className='col-8 productValue text-start discount'>{data.discountPercentage}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Price</div>
-                                <div className='col-8 text-start'>{data.price}</div>
+                                <div className='col-8 productValue text-start'>{data.price}</div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Rating</div>
-                                <div className='col-8 text-start'>{data.rating}</div>
+                                <div className='col-8 productValue text-start'> <Rating size={20} ratingValue={Number(data.rating) * 20} /></div>
                             </div>
                             <div className='d-flex productKeys mb-2'>
                                 <div className='col-4 productDetail text-start'>Stock</div>
-                                <div className='col-8 text-start'>{data.stock}</div>
+                                <div className='col-8 productValue text-start'>{data.stock}</div>
                             </div>
 
 
