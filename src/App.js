@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import logo from './logo.svg';
 import { Table, Layout, Menu, Avatar, Input  } from 'antd';
 import 'antd/dist/antd.css';
-import axios from 'axios';
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Rating } from 'react-simple-star-rating'
@@ -11,7 +9,8 @@ import { BugOutlined, SearchOutlined } from '@ant-design/icons'
 
 function App() {
     const [products, setProducts] = useState([]);
-    const [statistics, setStatistics] = useState([])
+    const [statistics, setStatistics] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([])
     const [loading, setLoading] = useState(false)
     const [tableParams, setTableParams] = useState({
         pagination: {
@@ -594,6 +593,9 @@ function App() {
     useEffect(() => {
         getInsightdata()
     }, [])
+    useEffect(()=>{
+        setFilteredProducts(statistics)
+    },[statistics])
     const columns = [
         {
             title: 'ID',
@@ -635,11 +637,11 @@ function App() {
             dataIndex: 'stock',
             key: 'stock',
         },
-        {
-            title: 'Title',
-            dataIndex: 'title',
-            key: 'title',
-        },
+        // {
+        //     title: 'Title',
+        //     dataIndex: 'title',
+        //     key: 'title',
+        // },
     ];
     const handleTableChange = (pagination, filters, sorter) => {
         setTableParams({
@@ -648,16 +650,22 @@ function App() {
             ...sorter,
         });
     };
+
+    const filterData = (e) =>{
+        const text = (e.target.value).toLowerCase();
+       const result = statistics.filter((data, index)=>{
+            return (data.title.toLowerCase().includes(text) || data.brand.toLowerCase().includes(text) || data.category.toLowerCase().includes(text))
+        })
+        setFilteredProducts(result)
+        
+    }
     console.log("statistics", statistics);
     console.log('products--->', products);
     return (
         <div className="App">
-            <div className='me-4 d-none d-sm-flex' style={{ marginTop: "10px", justifyContent: "space-between", alignItems:'center' }}>
+            <div className='me-4 d-none d-sm-flex headerBar' style={{ marginTop: "10px", justifyContent: "space-between", alignItems:'center' }}>
                 <div >
-                    <Input placeholder="Search Employees, Jobs, Companies, etc." style={{
-                        width: "887px",
-                        marginLeft: "74px", padding: "6px", borderRadius: "6px"
-                    }} />
+                    <Input placeholder="Search Title, Brand, Category, etc."  className='searchField' onChange={(e)=>filterData(e)} />
                 </div>
                 <div>
                     <BugOutlined /> Report Bug
@@ -666,17 +674,18 @@ function App() {
                     <div className='align-items-center' style={{ display: "flex" }}>
                         <div className='me-3'>
                             Matt</div>
-                        <div> <Avatar size={40}>U</Avatar></div>
+                        <div> <Avatar size={40} className='avathar'>U</Avatar></div>
                     </div>
                 </div>
             </div>
-            <nav class="navbar navbar-light bg-light d-block d-sm-none">
+            <nav class="navbar navbar-light bg-light d-flex headerBarMobile   d-sm-none">
                 <div class="container-fluid">
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <span class="btn btn-outline-success" type="submit">vinoth</span>
-
-                        <Avatar size={40}>U</Avatar>
+                    <form class="d-flex w-100 justify-content-between align-items-center ">
+                        <input class="form-control me-2 w-80" type="search" placeholder="Search Title, Brand, Category, etc." className='searchFieldMobile' aria-label="Search" onChange={(e)=>filterData(e)} />
+                        <span class=" mx-1 headerText" type="submit" className='avathar'>Vinoth</span>
+                        <div>
+                        <Avatar size={35}>U</Avatar>
+                        </div>
                     </form>
                 </div>
             </nav>
@@ -685,16 +694,16 @@ function App() {
                     columns={columns}
                     //   rowKey={(record) => record.login.uuid}
                     // dataSource={arr}
-                    dataSource={statistics}
+                    dataSource={filteredProducts}
                     pagination={tableParams.pagination}
                     // loading={loading}
                     scroll={true}
-
+                    
                     onChange={handleTableChange}
                 />
             </div>
             <div className='d-block d-sm-none'>
-                {statistics.map((data, index) => {
+                {filteredProducts.map((data, index) => {
                     // brand   "Apple"
                     // category    "smartphones"
                     // description "An apple mobile which is nothing like apple"

@@ -62,3 +62,57 @@
 .card{
   background: #efefef;
 }
+/* style={{
+  width: "887px",
+  marginLeft: "/74px", padding: "6px", borderRadius: "6px"
+}} className='searchField' */
+.searchField{
+  width: 850px ;
+  margin: 10px;
+  margin-left: 20px;
+  padding: 6px;
+  background: #2d2b3d;
+  color: #96959e;
+  border: 1px solid #96959e !important;
+}
+.searchFieldMobile, .searchField{
+  background: #2d2b3d;
+  color: #96959e;
+  border: 1px solid #96959e !important;
+  border-radius: 6px;
+}
+@media(max-width: 992px){
+  .searchField{
+    width: 400px ;
+  }
+}
+@media(max-width: 992px){
+  .searchField{
+    width: 400px ;
+  }
+}
+@media(max-width: 700px){
+  .searchField{
+    width: 300px ;
+  }
+}
+.headerBar, .headerBarMobile{
+  width: 100%;
+  background: #1a1926 !important; 
+  color: #8c8c92 !important;
+  padding: 0px 10px;
+}
+.headerText{
+  color: #8c8c92 !important;
+
+}
+.headerBarMobile{
+  padding: 10px 0px;
+}
+table thead tr th{
+  background: #d4d3e0 !important;
+}
+.avathar{
+  color: #1a1926; 
+
+}
