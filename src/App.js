@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Table, Layout, Menu, Avatar, Input  } from 'antd';
+import { Table, Avatar, Input, Button } from 'antd';
+import { Modal } from "react-bootstrap";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import axios from 'axios';
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { Rating } from 'react-simple-star-rating'
+import { BugOutlined } from '@ant-design/icons'
+
 import './App.css';
-import { BugOutlined, SearchOutlined } from '@ant-design/icons'
 
 function App() {
-    const [products, setProducts] = useState([]);
     const [statistics, setStatistics] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([])
     const [loading, setLoading] = useState(false)
@@ -18,561 +23,18 @@ function App() {
             pageSize: 10,
         },
     });
-    var Products = [
-        {
-            "id": 1,
-            "title": "iPhone 9",
-            "description": "An apple mobile which is nothing like apple",
-            "price": 549,
-            "discountPercentage": 12.96,
-            "rating": 4.69,
-            "stock": 94,
-            "brand": "Apple",
-            "category": "smartphones",
-            "thumbnail": "https://dummyjson.com/image/i/products/1/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/1/1.jpg",
-                "https://dummyjson.com/image/i/products/1/2.jpg",
-                "https://dummyjson.com/image/i/products/1/3.jpg",
-                "https://dummyjson.com/image/i/products/1/4.jpg",
-                "https://dummyjson.com/image/i/products/1/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 2,
-            "title": "iPhone X",
-            "description": "SIM-Free, Model A19211 6.5-inch Super Retina HD display with OLED technology A12 Bionic chip with ...",
-            "price": 899,
-            "discountPercentage": 17.94,
-            "rating": 4.44,
-            "stock": 34,
-            "brand": "Apple",
-            "category": "smartphones",
-            "thumbnail": "https://dummyjson.com/image/i/products/2/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/2/1.jpg",
-                "https://dummyjson.com/image/i/products/2/2.jpg",
-                "https://dummyjson.com/image/i/products/2/3.jpg",
-                "https://dummyjson.com/image/i/products/2/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 3,
-            "title": "Samsung Universe 9",
-            "description": "Samsung's new variant which goes beyond Galaxy to the Universe",
-            "price": 1249,
-            "discountPercentage": 15.46,
-            "rating": 4.09,
-            "stock": 36,
-            "brand": "Samsung",
-            "category": "smartphones",
-            "thumbnail": "https://dummyjson.com/image/i/products/3/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/3/1.jpg"
-            ]
-        },
-        {
-            "id": 4,
-            "title": "OPPOF19",
-            "description": "OPPO F19 is officially announced on April 2021.",
-            "price": 280,
-            "discountPercentage": 17.91,
-            "rating": 4.3,
-            "stock": 123,
-            "brand": "OPPO",
-            "category": "smartphones",
-            "thumbnail": "https://dummyjson.com/image/i/products/4/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/4/1.jpg",
-                "https://dummyjson.com/image/i/products/4/2.jpg",
-                "https://dummyjson.com/image/i/products/4/3.jpg",
-                "https://dummyjson.com/image/i/products/4/4.jpg",
-                "https://dummyjson.com/image/i/products/4/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 5,
-            "title": "Huawei P30",
-            "description": "Huawei’s re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.",
-            "price": 499,
-            "discountPercentage": 10.58,
-            "rating": 4.09,
-            "stock": 32,
-            "brand": "Huawei",
-            "category": "smartphones",
-            "thumbnail": "https://dummyjson.com/image/i/products/5/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/5/1.jpg",
-                "https://dummyjson.com/image/i/products/5/2.jpg",
-                "https://dummyjson.com/image/i/products/5/3.jpg"
-            ]
-        },
-        {
-            "id": 6,
-            "title": "MacBook Pro",
-            "description": "MacBook Pro 2021 with mini-LED display may launch between September, November",
-            "price": 1749,
-            "discountPercentage": 11.02,
-            "rating": 4.57,
-            "stock": 83,
-            "brand": "APPle",
-            "category": "laptops",
-            "thumbnail": "https://dummyjson.com/image/i/products/6/thumbnail.png",
-            "images": [
-                "https://dummyjson.com/image/i/products/6/1.png",
-                "https://dummyjson.com/image/i/products/6/2.jpg",
-                "https://dummyjson.com/image/i/products/6/3.png",
-                "https://dummyjson.com/image/i/products/6/4.jpg"
-            ]
-        },
-        {
-            "id": 7,
-            "title": "Samsung Galaxy Book",
-            "description": "Samsung Galaxy Book S (2020) Laptop With Intel Lakefield Chip, 8GB of RAM Launched",
-            "price": 1499,
-            "discountPercentage": 4.15,
-            "rating": 4.25,
-            "stock": 50,
-            "brand": "Samsung",
-            "category": "laptops",
-            "thumbnail": "https://dummyjson.com/image/i/products/7/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/7/1.jpg",
-                "https://dummyjson.com/image/i/products/7/2.jpg",
-                "https://dummyjson.com/image/i/products/7/3.jpg",
-                "https://dummyjson.com/image/i/products/7/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 8,
-            "title": "Microsoft Surface Laptop 4",
-            "description": "Style and speed. Stand out on HD video calls backed by Studio Mics. Capture ideas on the vibrant touchscreen.",
-            "price": 1499,
-            "discountPercentage": 10.23,
-            "rating": 4.43,
-            "stock": 68,
-            "brand": "Microsoft Surface",
-            "category": "laptops",
-            "thumbnail": "https://dummyjson.com/image/i/products/8/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/8/1.jpg",
-                "https://dummyjson.com/image/i/products/8/2.jpg",
-                "https://dummyjson.com/image/i/products/8/3.jpg",
-                "https://dummyjson.com/image/i/products/8/4.jpg",
-                "https://dummyjson.com/image/i/products/8/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 9,
-            "title": "Infinix INBOOK",
-            "description": "Infinix Inbook X1 Ci3 10th 8GB 256GB 14 Win10 Grey – 1 Year Warranty",
-            "price": 1099,
-            "discountPercentage": 11.83,
-            "rating": 4.54,
-            "stock": 96,
-            "brand": "Infinix",
-            "category": "laptops",
-            "thumbnail": "https://dummyjson.com/image/i/products/9/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/9/1.jpg",
-                "https://dummyjson.com/image/i/products/9/2.png",
-                "https://dummyjson.com/image/i/products/9/3.png",
-                "https://dummyjson.com/image/i/products/9/4.jpg",
-                "https://dummyjson.com/image/i/products/9/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 10,
-            "title": "HP Pavilion 15-DK1056WM",
-            "description": "HP Pavilion 15-DK1056WM Gaming Laptop 10th Gen Core i5, 8GB, 256GB SSD, GTX 1650 4GB, Windows 10",
-            "price": 1099,
-            "discountPercentage": 6.18,
-            "rating": 4.43,
-            "stock": 89,
-            "brand": "HP Pavilion",
-            "category": "laptops",
-            "thumbnail": "https://dummyjson.com/image/i/products/10/thumbnail.jpeg",
-            "images": [
-                "https://dummyjson.com/image/i/products/10/1.jpg",
-                "https://dummyjson.com/image/i/products/10/2.jpg",
-                "https://dummyjson.com/image/i/products/10/3.jpg",
-                "https://dummyjson.com/image/i/products/10/thumbnail.jpeg"
-            ]
-        },
-        {
-            "id": 11,
-            "title": "perfume Oil",
-            "description": "Mega Discount, Impression of Acqua Di Gio by GiorgioArmani concentrated attar perfume Oil",
-            "price": 13,
-            "discountPercentage": 8.4,
-            "rating": 4.26,
-            "stock": 65,
-            "brand": "Impression of Acqua Di Gio",
-            "category": "fragrances",
-            "thumbnail": "https://dummyjson.com/image/i/products/11/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/11/1.jpg",
-                "https://dummyjson.com/image/i/products/11/2.jpg",
-                "https://dummyjson.com/image/i/products/11/3.jpg",
-                "https://dummyjson.com/image/i/products/11/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 12,
-            "title": "Brown Perfume",
-            "description": "Royal_Mirage Sport Brown Perfume for Men & Women - 120ml",
-            "price": 40,
-            "discountPercentage": 15.66,
-            "rating": 4,
-            "stock": 52,
-            "brand": "Royal_Mirage",
-            "category": "fragrances",
-            "thumbnail": "https://dummyjson.com/image/i/products/12/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/12/1.jpg",
-                "https://dummyjson.com/image/i/products/12/2.jpg",
-                "https://dummyjson.com/image/i/products/12/3.png",
-                "https://dummyjson.com/image/i/products/12/4.jpg",
-                "https://dummyjson.com/image/i/products/12/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 13,
-            "title": "Fog Scent Xpressio Perfume",
-            "description": "Product details of Best Fog Scent Xpressio Perfume 100ml For Men cool long lasting perfumes for Men",
-            "price": 13,
-            "discountPercentage": 8.14,
-            "rating": 4.59,
-            "stock": 61,
-            "brand": "Fog Scent Xpressio",
-            "category": "fragrances",
-            "thumbnail": "https://dummyjson.com/image/i/products/13/thumbnail.webp",
-            "images": [
-                "https://dummyjson.com/image/i/products/13/1.jpg",
-                "https://dummyjson.com/image/i/products/13/2.png",
-                "https://dummyjson.com/image/i/products/13/3.jpg",
-                "https://dummyjson.com/image/i/products/13/4.jpg",
-                "https://dummyjson.com/image/i/products/13/thumbnail.webp"
-            ]
-        },
-        {
-            "id": 14,
-            "title": "Non-Alcoholic Concentrated Perfume Oil",
-            "description": "Original Al Munakh® by Mahal Al Musk | Our Impression of Climate | 6ml Non-Alcoholic Concentrated Perfume Oil",
-            "price": 120,
-            "discountPercentage": 15.6,
-            "rating": 4.21,
-            "stock": 114,
-            "brand": "Al Munakh",
-            "category": "fragrances",
-            "thumbnail": "https://dummyjson.com/image/i/products/14/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/14/1.jpg",
-                "https://dummyjson.com/image/i/products/14/2.jpg",
-                "https://dummyjson.com/image/i/products/14/3.jpg",
-                "https://dummyjson.com/image/i/products/14/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 15,
-            "title": "Eau De Perfume Spray",
-            "description": "Genuine  Al-Rehab spray perfume from UAE/Saudi Arabia/Yemen High Quality",
-            "price": 30,
-            "discountPercentage": 10.99,
-            "rating": 4.7,
-            "stock": 105,
-            "brand": "Lord - Al-Rehab",
-            "category": "fragrances",
-            "thumbnail": "https://dummyjson.com/image/i/products/15/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/15/1.jpg",
-                "https://dummyjson.com/image/i/products/15/2.jpg",
-                "https://dummyjson.com/image/i/products/15/3.jpg",
-                "https://dummyjson.com/image/i/products/15/4.jpg",
-                "https://dummyjson.com/image/i/products/15/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 16,
-            "title": "Hyaluronic Acid Serum",
-            "description": "L'OrÃ©al Paris introduces Hyaluron Expert Replumping Serum formulated with 1.5% Hyaluronic Acid",
-            "price": 19,
-            "discountPercentage": 13.31,
-            "rating": 4.83,
-            "stock": 110,
-            "brand": "L'Oreal Paris",
-            "category": "skincare",
-            "thumbnail": "https://dummyjson.com/image/i/products/16/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/16/1.png",
-                "https://dummyjson.com/image/i/products/16/2.webp",
-                "https://dummyjson.com/image/i/products/16/3.jpg",
-                "https://dummyjson.com/image/i/products/16/4.jpg",
-                "https://dummyjson.com/image/i/products/16/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 17,
-            "title": "Tree Oil 30ml",
-            "description": "Tea tree oil contains a number of compounds, including terpinen-4-ol, that have been shown to kill certain bacteria,",
-            "price": 12,
-            "discountPercentage": 4.09,
-            "rating": 4.52,
-            "stock": 78,
-            "brand": "Hemani Tea",
-            "category": "skincare",
-            "thumbnail": "https://dummyjson.com/image/i/products/17/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/17/1.jpg",
-                "https://dummyjson.com/image/i/products/17/2.jpg",
-                "https://dummyjson.com/image/i/products/17/3.jpg",
-                "https://dummyjson.com/image/i/products/17/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 18,
-            "title": "Oil Free Moisturizer 100ml",
-            "description": "Dermive Oil Free Moisturizer with SPF 20 is specifically formulated with ceramides, hyaluronic acid & sunscreen.",
-            "price": 40,
-            "discountPercentage": 13.1,
-            "rating": 4.56,
-            "stock": 88,
-            "brand": "Dermive",
-            "category": "skincare",
-            "thumbnail": "https://dummyjson.com/image/i/products/18/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/18/1.jpg",
-                "https://dummyjson.com/image/i/products/18/2.jpg",
-                "https://dummyjson.com/image/i/products/18/3.jpg",
-                "https://dummyjson.com/image/i/products/18/4.jpg",
-                "https://dummyjson.com/image/i/products/18/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 19,
-            "title": "Skin Beauty Serum.",
-            "description": "Product name: rorec collagen hyaluronic acid white face serum riceNet weight: 15 m",
-            "price": 46,
-            "discountPercentage": 10.68,
-            "rating": 4.42,
-            "stock": 54,
-            "brand": "ROREC White Rice",
-            "category": "skincare",
-            "thumbnail": "https://dummyjson.com/image/i/products/19/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/19/1.jpg",
-                "https://dummyjson.com/image/i/products/19/2.jpg",
-                "https://dummyjson.com/image/i/products/19/3.png",
-                "https://dummyjson.com/image/i/products/19/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 20,
-            "title": "Freckle Treatment Cream- 15gm",
-            "description": "Fair & Clear is Pakistan's only pure Freckle cream which helpsfade Freckles, Darkspots and pigments. Mercury level is 0%, so there are no side effects.",
-            "price": 70,
-            "discountPercentage": 16.99,
-            "rating": 4.06,
-            "stock": 140,
-            "brand": "Fair & Clear",
-            "category": "skincare",
-            "thumbnail": "https://dummyjson.com/image/i/products/20/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/20/1.jpg",
-                "https://dummyjson.com/image/i/products/20/2.jpg",
-                "https://dummyjson.com/image/i/products/20/3.jpg",
-                "https://dummyjson.com/image/i/products/20/4.jpg",
-                "https://dummyjson.com/image/i/products/20/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 21,
-            "title": "- Daal Masoor 500 grams",
-            "description": "Fine quality Branded Product Keep in a cool and dry place",
-            "price": 20,
-            "discountPercentage": 4.81,
-            "rating": 4.44,
-            "stock": 133,
-            "brand": "Saaf & Khaas",
-            "category": "groceries",
-            "thumbnail": "https://dummyjson.com/image/i/products/21/thumbnail.png",
-            "images": [
-                "https://dummyjson.com/image/i/products/21/1.png",
-                "https://dummyjson.com/image/i/products/21/2.jpg",
-                "https://dummyjson.com/image/i/products/21/3.jpg"
-            ]
-        },
-        {
-            "id": 22,
-            "title": "Elbow Macaroni - 400 gm",
-            "description": "Product details of Bake Parlor Big Elbow Macaroni - 400 gm",
-            "price": 14,
-            "discountPercentage": 15.58,
-            "rating": 4.57,
-            "stock": 146,
-            "brand": "Bake Parlor Big",
-            "category": "groceries",
-            "thumbnail": "https://dummyjson.com/image/i/products/22/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/22/1.jpg",
-                "https://dummyjson.com/image/i/products/22/2.jpg",
-                "https://dummyjson.com/image/i/products/22/3.jpg"
-            ]
-        },
-        {
-            "id": 23,
-            "title": "Orange Essence Food Flavou",
-            "description": "Specifications of Orange Essence Food Flavour For Cakes and Baking Food Item",
-            "price": 14,
-            "discountPercentage": 8.04,
-            "rating": 4.85,
-            "stock": 26,
-            "brand": "Baking Food Items",
-            "category": "groceries",
-            "thumbnail": "https://dummyjson.com/image/i/products/23/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/23/1.jpg",
-                "https://dummyjson.com/image/i/products/23/2.jpg",
-                "https://dummyjson.com/image/i/products/23/3.jpg",
-                "https://dummyjson.com/image/i/products/23/4.jpg",
-                "https://dummyjson.com/image/i/products/23/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 24,
-            "title": "cereals muesli fruit nuts",
-            "description": "original fauji cereal muesli 250gm box pack original fauji cereals muesli fruit nuts flakes breakfast cereal break fast faujicereals cerels cerel foji fouji",
-            "price": 46,
-            "discountPercentage": 16.8,
-            "rating": 4.94,
-            "stock": 113,
-            "brand": "fauji",
-            "category": "groceries",
-            "thumbnail": "https://dummyjson.com/image/i/products/24/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/24/1.jpg",
-                "https://dummyjson.com/image/i/products/24/2.jpg",
-                "https://dummyjson.com/image/i/products/24/3.jpg",
-                "https://dummyjson.com/image/i/products/24/4.jpg",
-                "https://dummyjson.com/image/i/products/24/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 25,
-            "title": "Gulab Powder 50 Gram",
-            "description": "Dry Rose Flower Powder Gulab Powder 50 Gram • Treats Wounds",
-            "price": 70,
-            "discountPercentage": 13.58,
-            "rating": 4.87,
-            "stock": 47,
-            "brand": "Dry Rose",
-            "category": "groceries",
-            "thumbnail": "https://dummyjson.com/image/i/products/25/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/25/1.png",
-                "https://dummyjson.com/image/i/products/25/2.jpg",
-                "https://dummyjson.com/image/i/products/25/3.png",
-                "https://dummyjson.com/image/i/products/25/4.jpg",
-                "https://dummyjson.com/image/i/products/25/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 26,
-            "title": "Plant Hanger For Home",
-            "description": "Boho Decor Plant Hanger For Home Wall Decoration Macrame Wall Hanging Shelf",
-            "price": 41,
-            "discountPercentage": 17.86,
-            "rating": 4.08,
-            "stock": 131,
-            "brand": "Boho Decor",
-            "category": "home-decoration",
-            "thumbnail": "https://dummyjson.com/image/i/products/26/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/26/1.jpg",
-                "https://dummyjson.com/image/i/products/26/2.jpg",
-                "https://dummyjson.com/image/i/products/26/3.jpg",
-                "https://dummyjson.com/image/i/products/26/4.jpg",
-                "https://dummyjson.com/image/i/products/26/5.jpg",
-                "https://dummyjson.com/image/i/products/26/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 27,
-            "title": "Flying Wooden Bird",
-            "description": "Package Include 6 Birds with Adhesive Tape Shape: 3D Shaped Wooden Birds Material: Wooden MDF, Laminated 3.5mm",
-            "price": 51,
-            "discountPercentage": 15.58,
-            "rating": 4.41,
-            "stock": 17,
-            "brand": "Flying Wooden",
-            "category": "home-decoration",
-            "thumbnail": "https://dummyjson.com/image/i/products/27/thumbnail.webp",
-            "images": [
-                "https://dummyjson.com/image/i/products/27/1.jpg",
-                "https://dummyjson.com/image/i/products/27/2.jpg",
-                "https://dummyjson.com/image/i/products/27/3.jpg",
-                "https://dummyjson.com/image/i/products/27/4.jpg",
-                "https://dummyjson.com/image/i/products/27/thumbnail.webp"
-            ]
-        },
-        {
-            "id": 28,
-            "title": "3D Embellishment Art Lamp",
-            "description": "3D led lamp sticker Wall sticker 3d wall art light on/off button  cell operated (included)",
-            "price": 20,
-            "discountPercentage": 16.49,
-            "rating": 4.82,
-            "stock": 54,
-            "brand": "LED Lights",
-            "category": "home-decoration",
-            "thumbnail": "https://dummyjson.com/image/i/products/28/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/28/1.jpg",
-                "https://dummyjson.com/image/i/products/28/2.jpg",
-                "https://dummyjson.com/image/i/products/28/3.png",
-                "https://dummyjson.com/image/i/products/28/4.jpg",
-                "https://dummyjson.com/image/i/products/28/thumbnail.jpg"
-            ]
-        },
-        {
-            "id": 29,
-            "title": "Handcraft Chinese style",
-            "description": "Handcraft Chinese style art luxury palace hotel villa mansion home decor ceramic vase with brass fruit plate",
-            "price": 60,
-            "discountPercentage": 15.34,
-            "rating": 4.44,
-            "stock": 7,
-            "brand": "luxury palace",
-            "category": "home-decoration",
-            "thumbnail": "https://dummyjson.com/image/i/products/29/thumbnail.webp",
-            "images": [
-                "https://dummyjson.com/image/i/products/29/1.jpg",
-                "https://dummyjson.com/image/i/products/29/2.jpg",
-                "https://dummyjson.com/image/i/products/29/3.webp",
-                "https://dummyjson.com/image/i/products/29/4.webp",
-                "https://dummyjson.com/image/i/products/29/thumbnail.webp"
-            ]
-        },
-        {
-            "id": 30,
-            "title": "Key Holder",
-            "description": "Attractive DesignMetallic materialFour key hooksReliable & DurablePremium Quality",
-            "price": 30,
-            "discountPercentage": 2.92,
-            "rating": 4.92,
-            "stock": 54,
-            "brand": "Golden",
-            "category": "home-decoration",
-            "thumbnail": "https://dummyjson.com/image/i/products/30/thumbnail.jpg",
-            "images": [
-                "https://dummyjson.com/image/i/products/30/1.jpg",
-                "https://dummyjson.com/image/i/products/30/2.jpg",
-                "https://dummyjson.com/image/i/products/30/3.jpg",
-                "https://dummyjson.com/image/i/products/30/thumbnail.jpg"
-            ]
-        }
-    ]
-    const getInsightdata = async () => {
+    const initialData = {
+        title: "",
+        brand: "",
+        category: "",
+        description: "",
+        price: "",
+        stock: "",
+        rating: "",
+    };
+    const [editModal, setEditModal] = useState({ data: initialData, show: false })
+
+    const getProductData = async () => {
         try {
             setLoading(true)
             let insightsResult = await fetch("https://dummyjson.com/products")
@@ -591,21 +53,38 @@ function App() {
     };
 
     useEffect(() => {
-        getInsightdata()
+        getProductData()
     }, [])
-    useEffect(()=>{
+    useEffect(() => {
         setFilteredProducts(statistics)
-    },[statistics])
+    }, [statistics])
+    const editFn = (e) => {
+        setEditModal({ data: e, show: true })
+    }
     const columns = [
+        {
+            title: '',
+            dataIndex: 'edit',
+            key: 'edit',
+            render: (_, record) => (
+                <div className='edit text-right' onClick={() => editFn(record)}><i className="bi bi-pencil-fill"></i></div>
+            ),
+        },
         {
             title: 'ID',
             dataIndex: 'id',
             key: 'id',
+            render: (_, { id }) => (
+                <div className='productId'>{id}</div>
+            ),
         },
         {
             title: 'Title',
             dataIndex: 'title',
             key: 'title',
+            render: (_, { title }) => (
+                <div className='title'>{title}</div>
+            ),
         },
         {
             title: 'Brand',
@@ -621,21 +100,40 @@ function App() {
             title: 'Discount Percentage',
             dataIndex: 'discountPercentage',
             key: 'discountPercentage',
+            render: (_, { discountPercentage }) => (
+                <div className=''>{discountPercentage}%</div>
+            ),
         },
         {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
+            render: (_, { price }) => (
+                <div className=''>Rs.{price}</div>
+            ),
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
             key: 'rating',
+            render: (_, { rating }) => (
+                <Rating size={20} ratingValue={Number(rating) * 20} />
+            ),
         },
         {
             title: 'Stock',
             dataIndex: 'stock',
             key: 'stock',
+        },
+        {
+            title: '',
+            dataIndex: 'delete',
+            key: 'delete',
+            render: () => (
+                <div className='delete'>
+                    <i className="bi bi-trash-fill"></i>
+                </div>
+            ),
         },
         // {
         //     title: 'Title',
@@ -650,120 +148,257 @@ function App() {
             ...sorter,
         });
     };
+    const productValidation = Yup.object().shape({
+        title: Yup.string().trim().required("Title is required"),
+        brand: Yup.string().trim().required("Brand is required"),
+        category: Yup.string().trim().required("Category is required"),
+        description: Yup.string().required("Description is required"),
+        price: Yup.number().required("Price is required"),
+        stock: Yup.number().required("Stock is required"),
+        rating: Yup.string().required("Rating is required"),
+    });
+    const formik = useFormik({
+        initialValues: editModal.data,
+        enableReinitialize: true,
+        validationSchema: productValidation,
+        validateOnMount: true,
+        onSubmit: async (values, { resetForm }) => {
+            console.log('values----->', values);
+            try {
+                const response = await axios.put(`https://dummyjson.com/products/${values.id}`, values)
+                console.log('res', response);
+            } catch (error) {
+                const { response } = error;
+                console.log('err', response);
+            }
+            setEditModal({ data: initialData, show: false })
 
-    const filterData = (e) =>{
+        },
+    });
+    const inputType = (value) => {
+        if (value.type === "text") {
+            return (
+                <input
+                    type="text"
+                    className="form-control form-control-lg form-control-solid"
+                    placeholder={value.placeholder}
+                    {...formik.getFieldProps(value.key)}
+                />
+            );
+        }
+    };
+  
+    const editDetails = [
+        {
+            label: "Product title",
+            placeholder: "Product title",
+            key: "title",
+            type: "text",
+        },
+        {
+            label: "Brand",
+            placeholder: "Brand",
+            key: "brand",
+            type: "text",
+        },
+        {
+            label: "Category",
+            placeholder: "Category",
+            key: "category",
+            type: "text",
+        },
+        {
+            label: "Description",
+            placeholder: "Description",
+            key: "description",
+            type: "text",
+        },
+        {
+            label: "Price",
+            placeholder: "Price",
+            key: "price",
+            type: "text",
+        },
+        {
+            label: "Stock",
+            placeholder: "Stock",
+            key: "stock",
+            type: "text",
+
+        },
+        {
+            label: "Rating",
+            placeholder: "Rating ",
+            key: "rating",
+            type: "text",
+        },
+    ];
+    const filterData = (e) => {
         const text = (e.target.value).toLowerCase();
-       const result = statistics.filter((data, index)=>{
+        const result = statistics.filter((data) => {
             return (data.title.toLowerCase().includes(text) || data.brand.toLowerCase().includes(text) || data.category.toLowerCase().includes(text))
         })
         setFilteredProducts(result)
-        
+
     }
-    console.log("statistics", statistics);
-    console.log('products--->', products);
     return (
-        <div className="App">
-            <div className='me-4 d-none d-sm-flex headerBar' style={{ marginTop: "10px", justifyContent: "space-between", alignItems:'center' }}>
-                <div >
-                    <Input placeholder="Search Title, Brand, Category, etc."  className='searchField' onChange={(e)=>filterData(e)} />
-                </div>
-                <div>
-                    <BugOutlined /> Report Bug
-                </div>
-                <div>
-                    <div className='align-items-center' style={{ display: "flex" }}>
-                        <div className='me-3'>
-                            Matt</div>
-                        <div> <Avatar size={40} className='avathar'>U</Avatar></div>
+        <>
+            <div className="App">
+                <div className='me-4 d-none d-sm-flex headerBar' style={{ marginTop: "10px", justifyContent: "space-between", alignItems: 'center' }}>
+                    <div >
+                        <Input placeholder="Search Title, Brand, Category, etc." className='searchField' onChange={(e) => filterData(e)} />
+                    </div>
+                    <div>
+                        <BugOutlined /> Report Bug
+                    </div>
+                    <div>
+                        <div className='align-items-center' style={{ display: "flex" }}>
+                            <div className='me-3'>
+                                Matt</div>
+                            <div> <Avatar size={40} className='avathar'>U</Avatar></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <nav class="navbar navbar-light bg-light d-flex headerBarMobile   d-sm-none">
-                <div class="container-fluid">
-                    <form class="d-flex w-100 justify-content-between align-items-center ">
-                        <input class="form-control me-2 w-80" type="search" placeholder="Search Title, Brand, Category, etc." className='searchFieldMobile' aria-label="Search" onChange={(e)=>filterData(e)} />
-                        <span class=" mx-1 headerText" type="submit" className='avathar'>Vinoth</span>
-                        <div>
-                        <Avatar size={35}>U</Avatar>
+                <nav className="navbar navbar-light bg-light d-flex headerBarMobile   d-sm-none">
+                    <div className="container-fluid">
+                        <form className="d-flex w-100 justify-content-between align-items-center ">
+                            <input className="form-control me-2 w-80 searchFieldMobile" type="search" placeholder="Search Title, Brand, Category, etc." aria-label="Search" onChange={(e) => filterData(e)} />
+                            <span className=" mx-1 headerText avathar " type="submit">Vinoth</span>
+                            <div>
+                                <Avatar size={35}>U</Avatar>
+                            </div>
+                        </form>
+                    </div>
+                </nav>
+                <div className='d-flex justify-content-between mx-4 my-3'>
+                    <div className='manageColumn'>
+                        <i className="bi bi-list-columns-reverse"></i>Manage columns
+                    </div>
+                    <div className='d-flex '>
+                        <div className='delete me-3'>
+                            <i className="bi bi-trash-fill"></i>
+                            <span className='ms-1'>Delete</span>
                         </div>
-                    </form>
+                        <div className='edit'>
+                            <i className="bi bi-pencil-fill"></i>
+                            <span className='ms-1'>Edit</span>
+                        </div>
+                    </div>
+
                 </div>
-            </nav>
-            <div className='d-none d-sm-block'>
-                <Table
-                    columns={columns}
-                    //   rowKey={(record) => record.login.uuid}
-                    // dataSource={arr}
-                    dataSource={filteredProducts}
-                    pagination={tableParams.pagination}
-                    // loading={loading}
-                    scroll={true}
-                    
-                    onChange={handleTableChange}
-                />
-            </div>
-            <div className='d-block d-sm-none'>
-                {filteredProducts.map((data, index) => {
-                    // brand   "Apple"
-                    // category    "smartphones"
-                    // description "An apple mobile which is nothing like apple"
-                    // discountPercentage  12.96
-                    // id  1
-                    // images  (5) ['https://dummyjson.com/image/i/products/1/1.jpg', 'https://dummyjson.com/image/i/products/1/2.jpg', 'https://dummyjson.com/image/i/products/1/3.jpg', 'https://dummyjson.com/image/i/products/1/4.jpg', 'https://dummyjson.com/image/i/products/1/thumbnail.jpg']
-                    // price   549
-                    // rating  4.69
-                    // stock   94
-                    // thumbnail   "https://dummyjson.com/image/i/products/1/thumbnail.jpg"
-                    // title   "iPhone 9"
-                    return (
-                        <div className='m-2 card p-3'>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start '>Id</div>
-                                <div className=' text-start productId'>{data.id}</div>
-                            </div>
-                            {/* <div>
-                            <div>Brand</div>
-                            <div>{data.brand}</div>
-                        </div> */}
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Title</div>
-                                <div className='col-8 productValue text-start title'>{data.title}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Brand</div>
-                                <div className='col-8 productValue text-start'>{data.brand}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Category</div>
-                                <div className='col-8 productValue text-start'>{data.category}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Description</div>
-                                <div className='col-8 productValue text-start'>{data.description}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start '>Discount Percentage</div>
-                                <div className='col-8 productValue text-start discount'>{data.discountPercentage}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Price</div>
-                                <div className='col-8 productValue text-start'>{data.price}</div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Rating</div>
-                                <div className='col-8 productValue text-start'> <Rating size={20} ratingValue={Number(data.rating) * 20} /></div>
-                            </div>
-                            <div className='d-flex productKeys mb-2'>
-                                <div className='col-4 productDetail text-start'>Stock</div>
-                                <div className='col-8 productValue text-start'>{data.stock}</div>
-                            </div>
+                <div className='d-none d-sm-block'>
+                    <Table
+                        columns={columns}
+                        //   rowKey={(record) => record.login.uuid}
+                        // dataSource={arr}
+                        dataSource={filteredProducts}
+                        pagination={tableParams.pagination}
+                        // loading={loading}
+                        scroll={true}
+
+                        onChange={handleTableChange}
+                    />
+                </div>
+                <div className='d-block d-sm-none'>
+                    {filteredProducts.map((data, index) => {
+                        return (
+                            <div className='m-2 card p-3' key={index}>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start '>Id</div>
+                                    <div className=' text-start productId'>{data.id}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Title</div>
+                                    <div className='col-8 productValue text-start title'>{data.title}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Brand</div>
+                                    <div className='col-8 productValue text-start'>{data.brand}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Category</div>
+                                    <div className='col-8 productValue text-start'>{data.category}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Description</div>
+                                    <div className='col-8 productValue text-start'>{data.description}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start '>Discount Percentage</div>
+                                    <div className='col-8 productValue text-start discount'>{data.discountPercentage}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Price</div>
+                                    <div className='col-8 productValue text-start'>{data.price}</div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Rating</div>
+                                    <div className='col-8 productValue text-start'> <Rating size={20} ratingValue={Number(data.rating) * 20} /></div>
+                                </div>
+                                <div className='d-flex productKeys mb-2'>
+                                    <div className='col-4 productDetail text-start'>Stock</div>
+                                    <div className='col-8 productValue text-start'>{data.stock}</div>   
+                                </div>
+                                <div className='d-flex justify-content-end'>
+                                    <Button type="primary " className='me-2' onClick={() => setEditModal({data:data, show: true })}>Edit</Button>
+                                    <Button danger type="primary">Primary</Button>
+                                </div>
 
 
-                        </div>
-                    )
-                })}
+                            </div>
+                        )
+                    })}
+                </div>
+
             </div>
-        </div>
+            <Modal
+                show={editModal.show}
+                dialogClassName=""
+                centered
+                onHide={() => setEditModal((val) => ({ ...val, show: false }))}
+            >
+                <form
+                    onSubmit={formik.handleSubmit}
+                    noValidate
+                    className="modal-content"
+                >
+                    <div className="modal-header">
+                        <h2>Edit Product</h2>
+                        <i className="bi bi-x-circle-fill fs-1" onClick={() => setEditModal((val) => ({ ...val, show: false }))}></i>
+                    </div>
+                    <div className="card-body border-top p-3    ">
+                        {editDetails.map((data, index) => {
+                            return (
+                                <div className="row mb-3" key={index}>
+                                    <label className="col-lg-4 col-form-label required fw-bold fs-6">
+                                        {data.label}
+                                    </label>
+                                    <div className="col-lg-8 fv-row">
+                                        {inputType(data)}
+                                        {formik.touched[data.key] && formik.errors[data.key] && (
+                                            <div className="fv-plugins-message-container">
+                                                <div className="fv-help-block" style={{ color: "red" }}>
+                                                    {formik.errors[data.key]}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    <div className='d-flex justify-content-end m-4'>
+
+                        <button type="submit" className="btn btn-primary" disabled={false}>
+                            <span className="indicator-progress" style={{ display: "block" }}>
+                                Update Product
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+        </>
+
     );
 }
 

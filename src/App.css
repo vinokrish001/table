@@ -114,5 +114,11 @@ table thead tr th{
 }
 .avathar{
   color: #1a1926; 
-
+}
+.manageColumn, .edit, .delete {
+  color: rgb(28, 28, 196);
+  font-weight: 500;
+}
+.delete{
+  color: red;
 }
